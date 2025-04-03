@@ -30,8 +30,12 @@ pub struct LiquidRoutePlugin {
 }
 
 impl LiquidRoutePlugin {
-    pub fn new(config: Config) -> Result<Self, GeyserPluginError> {
+    pub fn new(mut config: Config) -> Result<Self, GeyserPluginError> {
         let _ = crate::debug_log_to_file("LiquidRoutePlugin::new called");
+        
+        // Validate and sanitize configuration to prevent memory allocation issues
+        config.liquidroute.validate();
+        let _ = crate::debug_log_to_file(&format!("Using validated config: {:?}", config.liquidroute));
         
         // Try to initialize logging and catch any panics
         let result = panic::catch_unwind(AssertUnwindSafe(|| {
@@ -43,9 +47,9 @@ impl LiquidRoutePlugin {
             let _ = crate::debug_log_to_file("Logging initialization caused a panic, continuing without standard logging");
         }
 
-        // Create tokio runtime with configured thread count
-        let runtime = match Builder::new_current_thread()
-            .enable_all()
+        // Create tokio runtime with a minimal configuration to avoid excessive memory allocation
+        let runtime = match Builder::new_current_thread() // Use current thread runtime to minimize overhead
+            .enable_time() // Only enable what we absolutely need
             .thread_name_fn(get_thread_name)
             .build() {
                 Ok(runtime) => {

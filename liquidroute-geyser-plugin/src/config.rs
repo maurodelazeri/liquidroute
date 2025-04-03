@@ -57,6 +57,18 @@ pub struct LiquidRouteConfig {
     pub thread_count: usize,
 }
 
+impl LiquidRouteConfig {
+    /// Validate and clamp configuration values to safe defaults
+    pub fn validate(&mut self) {
+        // Ensure thread_count is within reasonable limits (1-4)
+        if self.thread_count == 0 {
+            self.thread_count = 1;
+        } else if self.thread_count > 4 {
+            self.thread_count = 4;
+        }
+    }
+}
+
 fn default_log_level() -> String {
     "info".to_string()
 }
@@ -73,7 +85,8 @@ fn default_track_token_accounts() -> bool {
 }
 
 fn default_thread_count() -> usize {
-    4
+    // Default to 1 thread to minimize resource usage
+    1
 }
 
 impl Config {
