@@ -1,7 +1,8 @@
 {
-  "libpath": "/Users/maurodelazeri/work/src/github.com/quiknode-labs/algo/liquidroute-geyser-plugin/target/release/libliquidroute_geyser_plugin.so",
+  "libpath": "/home/batman/liquidroute/liquidroute-geyser-plugin/target/release/libliquidroute_geyser_plugin.so",
   "log": {
-    "level": "info"
+    "level": "debug",
+    "file": "/home/solana/liquidroute-plugin.log"
   },
   "liquidroute": {
     "track_token_accounts": true,
