@@ -1,0 +1,5 @@
+{
+  "libpath": "libsolana_geyser_plugin.so",
+  "track_token_accounts": true,
+  "thread_count": 8
+}

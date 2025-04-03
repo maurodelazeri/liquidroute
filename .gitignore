@@ -1,0 +1,15 @@
+# Solana
+test-ledger
+
+yellowstone-grpc
+
+# Rust
+target
+
+# Python
+venv
+__pycache__/
+
+# IDE
+.idea
+.vscode
