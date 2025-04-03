@@ -9,9 +9,6 @@ license = "Apache-2.0"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
-[[bin]]
-name = "config-check"
-
 [dependencies]
 # Match Agave's exact version of geyser-plugin-interface
 agave-geyser-plugin-interface = "=2.1.17"
@@ -31,7 +28,7 @@ thiserror = "1.0.65"
 json5 = "0.4.1"
 
 # Optional dependencies that match Agave's versions
-serde_bytes = "0.11.15" 
+serde_bytes = "0.11.15"
 serde_with = { version = "3.11.0", default-features = false }
 
 # Command-line parsing for the config-check binary
