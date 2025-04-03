@@ -23,7 +23,8 @@ use {
 
 #[derive(Debug)]
 pub struct PluginInner {
-    runtime: Runtime,
+    #[allow(dead_code)]
+    runtime: Runtime,  // Will be used in future implementations for async processing
     is_shutdown: AtomicBool,
     config: Config,
 }

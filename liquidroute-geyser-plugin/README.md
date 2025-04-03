@@ -37,17 +37,8 @@ Create a config file based on the example `config.json`:
 Validate your configuration with:
 
 ```bash
-cargo run --bin config-check -- --config /path/to/config.json
+cargo run --bin config-check -- --config config.json
 ```
-
-## Usage with Solana Validator
-
-1. Build the plugin
-2. Set the environment variable to point to your config:
-   ```
-   export LIQUIDROUTE_GEYSER_PLUGIN_CONFIG=/path/to/config.json
-   ```
-3. Configure the Solana validator to use this plugin in `validator.json`
 
 ## License
 
