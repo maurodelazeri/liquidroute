@@ -44,10 +44,9 @@ impl LiquidRoutePlugin {
         info!("LiquidRoute config: {:?}", config.liquidroute);
         
         // Create tokio runtime with configured thread count
-        let runtime = Builder::new_multi_thread()
+        let runtime = Builder::new_current_thread()
             .enable_all()
             .thread_name_fn(get_thread_name)
-            .worker_threads(config.liquidroute.thread_count)
             .build()
             .map_err(|e| GeyserPluginError::Custom(Box::new(e)))?;
             

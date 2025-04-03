@@ -2,6 +2,7 @@
 test-ledger
 
 yellowstone-grpc
+Cargo.lock
 
 # Rust
 target

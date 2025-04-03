@@ -1,22 +1,26 @@
 use {
     anyhow::{anyhow, Result},
-    clap::Parser,
+    clap::{App, Arg},
     liquidroute_geyser_plugin::config::Config,
     std::path::PathBuf,
 };
 
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    /// Path to the config file
-    #[arg(short, long)]
-    config: PathBuf,
-}
-
 fn main() -> Result<()> {
-    let args = Args::parse();
+    let matches = App::new("LiquidRoute Config Checker")
+        .version(env!("CARGO_PKG_VERSION"))
+        .author("LiquidRoute Team <info@liquidroute.com>")
+        .about("Validates LiquidRoute Geyser plugin configuration")
+        .arg(
+            Arg::with_name("config")
+                .short("c")
+                .long("config")
+                .value_name("FILE")
+                .help("Path to the config file")
+                .required(true)
+        )
+        .get_matches();
     
-    let config_path = args.config;
+    let config_path = PathBuf::from(matches.value_of("config").unwrap());
     if !config_path.exists() {
         return Err(anyhow!("Config file not found: {:?}", config_path));
     }
