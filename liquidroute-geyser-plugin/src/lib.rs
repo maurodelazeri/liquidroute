@@ -47,11 +47,13 @@ pub fn debug_log_to_file(message: &str) -> std::io::Result<()> {
         }
     };
     
-    // Safety: DEBUG_LOG_FILE is only set once during initialization and then only read
+    // Safety: This creates a raw constant pointer instead of a shared reference
+    // which avoids the UB of having a shared reference to a mutable static
     let debug_file = unsafe {
-        match &DEBUG_LOG_FILE {
-            Some(file) => file,
-            None => "/tmp/liquidroute_debug.log", // Fallback
+        if let Some(file) = &*std::ptr::addr_of!(DEBUG_LOG_FILE) {
+            file.as_str()
+        } else {
+            "/tmp/liquidroute_debug.log" // Fallback
         }
     };
     

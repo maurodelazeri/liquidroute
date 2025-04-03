@@ -55,7 +55,9 @@ impl LiquidRoutePlugin {
                 Err(e) => {
                     let error_msg = format!("Failed to create tokio runtime: {}", e);
                     let _ = crate::debug_log_to_file(&error_msg);
-                    return Err(GeyserPluginError::Custom(Box::new(e)));
+                    return Err(GeyserPluginError::AccountsUpdateError { 
+                        msg: format!("Failed to create tokio runtime: {}", e) 
+                    });
                 }
             };
 
@@ -85,7 +87,11 @@ impl GeyserPlugin for LiquidRoutePlugin {
             if let Err(err) = log::set_logger(logger) {
                 let msg = format!("Failed to set logger: {}", err);
                 let _ = crate::debug_log_to_file(&msg);
-                return Err(GeyserPluginError::Custom(Box::new(err)));
+                // Convert to a custom error message instead of wrapping the SetLoggerError
+                // because SetLoggerError doesn't implement std::error::Error
+                return Err(GeyserPluginError::SlotStatusUpdateError { 
+                    msg: format!("Failed to set logger: {}", err) 
+                });
             }
             Ok(())
         }));
