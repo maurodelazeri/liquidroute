@@ -1,11 +1,11 @@
 {
-  "libpath": "/home/batman/liquidroute/liquidroute-geyser-plugin/target/release/libliquidroute_geyser_plugin.so",
+  "libpath": "./target/release/libliquidroute_geyser_plugin.so",
   "log": {
     "level": "debug",
-    "file": "/home/solana/liquidroute-plugin.log"
+    "file": "/tmp/liquidroute-plugin.log"
   },
   "liquidroute": {
     "track_token_accounts": true,
-    "thread_count": 8
+    "thread_count": 4
   }
 }

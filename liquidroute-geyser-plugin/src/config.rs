@@ -14,6 +14,9 @@ pub enum ConfigError {
     
     #[error("Failed to parse config file: {0}")]
     Parse(#[source] serde_json::Error),
+    
+    #[error("Invalid config file path: {0}")]
+    InvalidPath(String),
 }
 
 /// Log configuration
@@ -22,6 +25,9 @@ pub struct LogConfig {
     /// Log level (e.g., info, debug, warn, error)
     #[serde(default = "default_log_level")]
     pub level: String,
+    
+    /// Optional log file path
+    pub file: Option<String>,
 }
 
 /// Main plugin configuration
@@ -58,6 +64,7 @@ fn default_log_level() -> String {
 fn default_log_config() -> LogConfig {
     LogConfig {
         level: default_log_level(),
+        file: None,
     }
 }
 
@@ -71,10 +78,36 @@ fn default_thread_count() -> usize {
 
 impl Config {
     pub fn read_from<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
-        let mut file = File::open(path).map_err(ConfigError::FileOpen)?;
-        let mut contents = String::new();
-        file.read_to_string(&mut contents).map_err(ConfigError::FileRead)?;
+        let path_str = path.as_ref().to_string_lossy().to_string();
+        let mut file = File::open(&path).map_err(|e| {
+            let _ = crate::debug_log_to_file(&format!("Failed to open config file {}: {}", path_str, e));
+            ConfigError::FileOpen(e)
+        })?;
         
-        serde_json::from_str(&contents).map_err(ConfigError::Parse)
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).map_err(|e| {
+            let _ = crate::debug_log_to_file(&format!("Failed to read config file {}: {}", path_str, e));
+            ConfigError::FileRead(e)
+        })?;
+        
+        // Try parsing with serde_json first, with detailed error logging
+        match serde_json::from_str(&contents) {
+            Ok(config) => {
+                let _ = crate::debug_log_to_file(&format!("Successfully parsed config from {}", path_str));
+                Ok(config)
+            },
+            Err(e) => {
+                let _ = crate::debug_log_to_file(&format!("Failed to parse config file {}: {}", path_str, e));
+                
+                // Try parsing with json5 as a fallback (more lenient JSON parser)
+                match json5::from_str(&contents) {
+                    Ok(config) => {
+                        let _ = crate::debug_log_to_file("Successfully parsed config using json5 fallback");
+                        Ok(config)
+                    },
+                    Err(_) => Err(ConfigError::Parse(e)),
+                }
+            }
+        }
     }
 }
