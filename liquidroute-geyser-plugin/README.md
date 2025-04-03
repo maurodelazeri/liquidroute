@@ -21,7 +21,7 @@ This plugin connects directly to Solana validators to monitor DEX account update
 cargo build --release
 ```
 
-The build process will create a shared library (`.so` on Linux, `.dylib` on macOS) located at `target/release/libliquidroute_geyser_plugin.*`.
+The build process will create a shared library (`.so` on Linux, `.dylib` on macOS) located at `target/release/liquidroute_geyser_plugin.*`.
 
 ## Configuration
 
@@ -29,7 +29,7 @@ Create a config file based on the example `config.json`:
 
 ```json
 {
-  "libpath": "/path/to/libliquidroute_geyser_plugin.so",
+  "libpath": "/path/to/liquidroute_geyser_plugin.so",
   "log": {
     "level": "info"
   },
@@ -64,12 +64,6 @@ cargo run --bin config-check -- --config /path/to/config.json
 
 ```bash
 solana-validator ... --geyser-plugin-config /path/to/config.json
-```
-
-You can also set the environment variable to point to your config:
-
-```bash
-export LIQUIDROUTE_GEYSER_PLUGIN_CONFIG=/path/to/config.json
 ```
 
 ## License
