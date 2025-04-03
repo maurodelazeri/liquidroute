@@ -24,7 +24,11 @@ fn main() -> Result<()> {
     match Config::read_from(&config_path) {
         Ok(config) => {
             println!("Configuration is valid!");
-            println!("{:#?}", config);
+            println!("libpath: {}", config.libpath);
+            println!("log level: {}", config.log.level);
+            println!("LiquidRoute configuration:");
+            println!("  track_token_accounts: {}", config.liquidroute.track_token_accounts);
+            println!("  thread_count: {}", config.liquidroute.thread_count);
             Ok(())
         }
         Err(err) => {

@@ -16,23 +16,53 @@ pub enum ConfigError {
     Parse(#[source] serde_json::Error),
 }
 
+/// Log configuration
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
+pub struct LogConfig {
+    /// Log level (e.g., info, debug, warn, error)
+    #[serde(default = "default_log_level")]
+    pub level: String,
+}
+
+/// Main plugin configuration
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Config {
-    // General plugin configuration
-    #[serde(default = "default_libpath")]
+    /// Path to the plugin shared library
     pub libpath: String,
     
-    // DEX-specific configuration
+    /// Logging configuration
+    #[serde(default = "default_log_config")]
+    pub log: LogConfig,
+    
+    /// LiquidRoute specific configuration
     #[serde(default)]
+    pub liquidroute: LiquidRouteConfig,
+}
+
+/// LiquidRoute specific configuration
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
+pub struct LiquidRouteConfig {
+    /// Whether to track token accounts
+    #[serde(default = "default_track_token_accounts")]
     pub track_token_accounts: bool,
     
-    // Performance configuration
+    /// Number of worker threads
     #[serde(default = "default_thread_count")]
     pub thread_count: usize,
 }
 
-fn default_libpath() -> String {
-    "libsolana_geyser_plugin.so".to_string()
+fn default_log_level() -> String {
+    "info".to_string()
+}
+
+fn default_log_config() -> LogConfig {
+    LogConfig {
+        level: default_log_level(),
+    }
+}
+
+fn default_track_token_accounts() -> bool {
+    true
 }
 
 fn default_thread_count() -> usize {

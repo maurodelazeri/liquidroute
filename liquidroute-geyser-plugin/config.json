@@ -1,5 +1,10 @@
 {
-  "libpath": "libsolana_geyser_plugin.so",
-  "track_token_accounts": true,
-  "thread_count": 8
+  "libpath": "/Users/maurodelazeri/work/src/github.com/quiknode-labs/algo/liquidroute-geyser-plugin/target/release/libliquidroute_geyser_plugin.so",
+  "log": {
+    "level": "info"
+  },
+  "liquidroute": {
+    "track_token_accounts": true,
+    "thread_count": 8
+  }
 }

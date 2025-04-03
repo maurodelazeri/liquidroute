@@ -1,6 +1,6 @@
 use {
     crate::{
-        config::Config,
+        config::{Config, LiquidRouteConfig},
         get_thread_name,
         version::plugin_version,
     },
@@ -26,7 +26,7 @@ pub struct PluginInner {
     #[allow(dead_code)]
     runtime: Runtime,  // Will be used in future implementations for async processing
     is_shutdown: AtomicBool,
-    config: Config,
+    config: LiquidRouteConfig,
 }
 
 #[derive(Debug)]
@@ -36,20 +36,25 @@ pub struct LiquidRoutePlugin {
 
 impl LiquidRoutePlugin {
     pub fn new(config: Config) -> Result<Self, GeyserPluginError> {
-        info!("Initializing LiquidRoute plugin with config: {:?}", config);
+        info!("Initializing LiquidRoute plugin");
+        
+        // Initialize logger if needed
+        // Note: For Solana validators, logging is typically already configured
+        // We don't attempt to set it up again, just log at appropriate level
+        info!("LiquidRoute config: {:?}", config.liquidroute);
         
         // Create tokio runtime with configured thread count
         let runtime = Builder::new_multi_thread()
             .enable_all()
             .thread_name_fn(get_thread_name)
-            .worker_threads(config.thread_count)
+            .worker_threads(config.liquidroute.thread_count)
             .build()
             .map_err(|e| GeyserPluginError::Custom(Box::new(e)))?;
             
         let inner = Arc::new(PluginInner {
             runtime,
             is_shutdown: AtomicBool::new(false),
-            config,
+            config: config.liquidroute,
         });
         
         info!("LiquidRoute plugin initialization complete: {}", plugin_version());
