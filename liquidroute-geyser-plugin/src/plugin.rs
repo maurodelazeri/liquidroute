@@ -4,7 +4,7 @@ use {
         ReplicaEntryInfoVersions, ReplicaTransactionInfoVersions, Result as PluginResult,
         SlotStatus,
     },
-    log::{info, debug, LevelFilter},
+    log::LevelFilter,
 };
 
 #[derive(Debug)]
@@ -12,7 +12,6 @@ pub struct LiquidRoutePlugin;
 
 impl LiquidRoutePlugin {
     pub fn new() -> Self {
-        // Don't use println! here as it's happening before the logger is set up
         Self {}
     }
 }
@@ -22,65 +21,44 @@ impl GeyserPlugin for LiquidRoutePlugin {
         "LiquidRoutePlugin"
     }
 
-    fn on_load(&mut self, config_file: &str, is_reload: bool) -> PluginResult<()> {
-        info!("LiquidRoutePlugin: Loaded with config: {}, reload: {}", config_file, is_reload);
+    fn on_load(&mut self, _config_file: &str, _is_reload: bool) -> PluginResult<()> {
         Ok(())
     }
 
     fn on_unload(&mut self) {
-        info!("LiquidRoutePlugin: Unloading");
+        // No-op
     }
 
     fn update_account(
         &self,
         _account: ReplicaAccountInfoVersions,
-        slot: u64,
-        is_startup: bool,
+        _slot: u64,
+        _is_startup: bool,
     ) -> PluginResult<()> {
-        // Only log during startup phase and only every 10,000 accounts to avoid spam
-        if is_startup && slot % 10000 == 0 {
-            debug!("LiquidRoutePlugin: Processing account at slot: {}", slot);
-        }
         Ok(())
     }
 
     fn update_slot_status(
         &self,
-        slot: u64,
-        parent: Option<u64>,
-        status: &SlotStatus,
+        _slot: u64,
+        _parent: Option<u64>,
+        _status: &SlotStatus,
     ) -> PluginResult<()> {
-        // Log only every 10,000 slots to avoid spam
-        if slot % 10000 == 0 {
-            debug!("LiquidRoutePlugin: Slot {} (parent: {:?}) status: {:?}",
-                   slot, parent, status);
-        }
         Ok(())
     }
 
     fn notify_block_metadata(
         &self,
-        block_info: ReplicaBlockInfoVersions,
+        _block_info: ReplicaBlockInfoVersions,
     ) -> PluginResult<()> {
-        // Log only occasionally based on slot to avoid spam
-        if let ReplicaBlockInfoVersions::V0_0_1(info) = &block_info {
-            // Use the slot field which is available
-            if info.slot % 10000 == 0 {
-                debug!("LiquidRoutePlugin: Block at slot {} processed", info.slot);
-            }
-        }
         Ok(())
     }
 
     fn notify_transaction(
         &self,
         _transaction: ReplicaTransactionInfoVersions,
-        slot: u64,
+        _slot: u64,
     ) -> PluginResult<()> {
-        // Only log occasional transactions
-        if slot % 100000 == 0 {
-            debug!("LiquidRoutePlugin: Transaction processed at slot {}", slot);
-        }
         Ok(())
     }
 
@@ -88,33 +66,26 @@ impl GeyserPlugin for LiquidRoutePlugin {
         &self,
         _entry: ReplicaEntryInfoVersions,
     ) -> PluginResult<()> {
-        // No logging here to avoid spam
         Ok(())
     }
 
     fn account_data_notifications_enabled(&self) -> bool {
-        // This is still false to minimize load
-        debug!("LiquidRoutePlugin: Validator checked account_data_notifications_enabled");
         false
     }
 
     fn transaction_notifications_enabled(&self) -> bool {
-        debug!("LiquidRoutePlugin: Validator checked transaction_notifications_enabled");
         false
     }
 
     fn entry_notifications_enabled(&self) -> bool {
-        debug!("LiquidRoutePlugin: Validator checked entry_notifications_enabled");
         false
     }
 
-    fn setup_logger(&self, _logger: &'static dyn log::Log, level: LevelFilter) -> PluginResult<()> {
-        info!("LiquidRoutePlugin: Logger setup with level {:?}", level);
+    fn setup_logger(&self, _logger: &'static dyn log::Log, _level: LevelFilter) -> PluginResult<()> {
         Ok(())
     }
 
     fn notify_end_of_startup(&self) -> PluginResult<()> {
-        info!("LiquidRoutePlugin: End of startup notification received");
         Ok(())
     }
 }
